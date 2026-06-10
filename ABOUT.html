@@ -37,17 +37,17 @@
       height: 100dvh;
       scroll-snap-align: start;
       overflow-y: hidden;
-      padding: 20px 16px 56px;
+      padding: clamp(16px, 2.5vw, 40px) clamp(14px, 3vw, 48px) clamp(52px, 7vh, 72px);
       display: flex;
       flex-direction: column;
     }
 
     .slide-inner {
-      max-width: 480px;
+      max-width: clamp(320px, 90vw, 520px);
       width: 100%;
       margin: 0 auto;
       background: #fff;
-      padding: 28px 24px;
+      padding: clamp(22px, 3vh, 40px) clamp(20px, 3.5vw, 52px);
       box-shadow: 0 2px 16px rgba(0,0,0,0.10);
       border-radius: 12px;
       flex: 1;
@@ -55,25 +55,30 @@
       scrollbar-width: thin;
     }
 
-    /* 데스크톱: 세로 스크롤 없이 폰트/간격 축소해서 내용 맞춤 */
-    @media (min-width: 768px) {
-      .slide { padding: 32px 32px 64px; }
-      .slide-inner {
-        max-width: 600px;
-        padding: 40px 52px;
-        overflow-y: hidden;
-        font-size: 13px;
-      }
-      .slide-inner .section { margin-bottom: 28px; }
-      .slide-inner p.body-text { margin-bottom: 8px; font-size: 13px; }
-      .slide-inner .spec-list li,
-      .slide-inner ul.dash-list li,
-      .slide-inner ol.step-list li,
-      .slide-inner .faq-a,
-      .slide-inner .faq-q,
-      .slide-inner .test-item .test-label,
-      .slide-inner .info-box p,
-      .slide-inner .contact-box p { font-size: 13px; }
+    /* ── 반응형 타이포 ── */
+    p.body-text    { font-size: clamp(12px, 1.5vw, 14px); margin-bottom: clamp(8px, 1vh, 12px); }
+    .section       { margin-bottom: clamp(24px, 3.5vh, 40px); }
+    .section-title { font-size: clamp(13px, 1.8vw, 17px); margin-bottom: clamp(10px, 1.5vh, 18px); }
+
+    .spec-list li,
+    ul.dash-list li,
+    ol.step-list li,
+    .faq-q, .faq-a,
+    .test-item .test-label,
+    .info-box p,
+    .contact-box p { font-size: clamp(12px, 1.4vw, 14px); }
+
+    ul.dash-list li  { padding-top: clamp(3px, 0.5vh, 5px); padding-bottom: clamp(3px, 0.5vh, 5px); }
+    ol.step-list li  { padding-top: clamp(5px, 0.8vh, 8px); padding-bottom: clamp(5px, 0.8vh, 8px); }
+    .faq-item        { margin-bottom: clamp(14px, 2vh, 22px); padding-bottom: clamp(12px, 1.8vh, 18px); }
+    .test-item       { margin-bottom: clamp(12px, 1.8vh, 20px); }
+    .info-box        { padding: clamp(10px, 1.5vh, 14px) clamp(12px, 2vw, 18px); margin: clamp(10px, 1.5vh, 14px) 0; }
+
+    @media (min-width: 1024px) {
+      .slide-inner { max-width: clamp(520px, 55vw, 720px); }
+    }
+    @media (min-width: 1440px) {
+      .slide-inner { max-width: clamp(640px, 48vw, 860px); }
     }
 
     /* ── 페이지 인디케이터 ── */
