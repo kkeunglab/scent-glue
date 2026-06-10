@@ -1,0 +1,565 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>센트글루(SCENT GLUE) 제품 설명서 v1.1</title>
+  <style>
+    * { box-sizing: border-box; margin: 0; padding: 0; }
+
+    html, body {
+      width: 100%;
+      height: 100dvh;
+      overflow: hidden;
+      font-family: 'Malgun Gothic', '맑은 고딕', 'Apple SD Gothic Neo', sans-serif;
+      font-size: 15px;
+      color: #1a1a1a;
+      background: #f4f4f4;
+      line-height: 1.75;
+    }
+
+    /* ── 슬라이더 컨테이너 ── */
+    .slider {
+      display: flex;
+      width: 100%;
+      height: 100dvh;
+      overflow-x: scroll;
+      scroll-snap-type: x mandatory;
+      -webkit-overflow-scrolling: touch;
+      scrollbar-width: none;
+    }
+    .slider::-webkit-scrollbar { display: none; }
+
+    /* ── 각 페이지 ── */
+    .slide {
+      flex: 0 0 100vw;
+      width: 100vw;
+      height: 100dvh;
+      scroll-snap-align: start;
+      overflow-y: hidden;
+      padding: 20px 16px 56px;
+      display: flex;
+      flex-direction: column;
+    }
+
+    .slide-inner {
+      max-width: 480px;
+      width: 100%;
+      margin: 0 auto;
+      background: #fff;
+      padding: 28px 24px;
+      box-shadow: 0 2px 16px rgba(0,0,0,0.10);
+      border-radius: 12px;
+      flex: 1;
+      overflow-y: auto;
+      scrollbar-width: thin;
+    }
+
+    /* 데스크톱: 세로 스크롤 없이 폰트/간격 축소해서 내용 맞춤 */
+    @media (min-width: 768px) {
+      .slide { padding: 32px 32px 64px; }
+      .slide-inner {
+        max-width: 600px;
+        padding: 40px 52px;
+        overflow-y: hidden;
+        font-size: 13px;
+      }
+      .slide-inner .section { margin-bottom: 28px; }
+      .slide-inner p.body-text { margin-bottom: 8px; font-size: 13px; }
+      .slide-inner .spec-list li,
+      .slide-inner ul.dash-list li,
+      .slide-inner ol.step-list li,
+      .slide-inner .faq-a,
+      .slide-inner .faq-q,
+      .slide-inner .test-item .test-label,
+      .slide-inner .info-box p,
+      .slide-inner .contact-box p { font-size: 13px; }
+    }
+
+    /* ── 페이지 인디케이터 ── */
+    .indicator {
+      position: fixed;
+      bottom: 20px;
+      left: 50%;
+      transform: translateX(-50%);
+      display: flex;
+      gap: 8px;
+      z-index: 100;
+    }
+    .dot {
+      width: 8px;
+      height: 8px;
+      border-radius: 50%;
+      background: #ccc;
+      cursor: pointer;
+      transition: background 0.2s, transform 0.2s;
+    }
+    .dot.active {
+      background: #1a1a1a;
+      transform: scale(1.3);
+    }
+
+    /* ── 페이지 번호 ── */
+    .page-num {
+      font-size: 12px;
+      color: #aaa;
+      text-align: right;
+      margin-bottom: 24px;
+      letter-spacing: 0.5px;
+    }
+
+    /* ── 표지 ── */
+    .cover {
+      position: relative;
+      height: 100%;
+      text-align: center;
+    }
+    .cover-title {
+      position: absolute;
+      top: 33.333%;
+      left: 0; right: 0;
+      transform: translateY(-50%);
+    }
+    .cover h1 {
+      font-size: clamp(22px, 5vw, 30px);
+      font-weight: 800;
+      letter-spacing: -0.5px;
+      line-height: 1.4;
+    }
+    .cover-bottom {
+      position: absolute;
+      bottom: 0;
+      left: 0; right: 0;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      gap: 20px;
+      padding-bottom: 8px;
+    }
+    .cover .meta {
+      font-size: 14px;
+      color: #444;
+      line-height: 2;
+    }
+    .cover .meta strong { color: #1a1a1a; }
+    .cover .confidential {
+      font-size: 12px;
+      color: #cc0000;
+      font-weight: 700;
+      line-height: 1.9;
+      border: 1.5px solid #cc0000;
+      display: inline-block;
+      padding: 8px 20px;
+      border-radius: 4px;
+    }
+
+    /* ── 섹션 ── */
+    .section { margin-bottom: 40px; }
+    .section:last-child { margin-bottom: 0; }
+
+    .section-title {
+      font-size: clamp(15px, 2.5vw, 17px);
+      font-weight: 800;
+      color: #1a1a1a;
+      border-bottom: 2px solid #1a1a1a;
+      padding-bottom: 8px;
+      margin-bottom: 18px;
+    }
+
+    p.body-text {
+      font-size: 14px;
+      color: #222;
+      margin-bottom: 12px;
+    }
+
+    /* ── 스펙 리스트 ── */
+    .spec-list { list-style: none; padding: 0; }
+    .spec-list li {
+      display: flex;
+      gap: 12px;
+      padding: 6px 0;
+      border-bottom: 1px solid #f0f0f0;
+      font-size: 14px;
+      line-height: 1.6;
+    }
+    .spec-list li .label {
+      font-weight: 700;
+      min-width: 80px;
+      color: #1a1a1a;
+      flex-shrink: 0;
+    }
+    .spec-list li .value { color: #333; }
+
+    /* ── 불릿 리스트 ── */
+    ul.dash-list { list-style: none; padding: 0; margin: 0; }
+    ul.dash-list li {
+      padding: 5px 0 5px 20px;
+      position: relative;
+      font-size: 14px;
+      color: #333;
+      line-height: 1.7;
+    }
+    ul.dash-list li::before { content: "–"; position: absolute; left: 0; color: #555; }
+
+    /* ── 번호 리스트 ── */
+    ol.step-list { list-style: none; padding: 0; counter-reset: step; }
+    ol.step-list li {
+      counter-increment: step;
+      padding: 8px 0 8px 52px;
+      position: relative;
+      font-size: 14px;
+      color: #333;
+      line-height: 1.7;
+    }
+    ol.step-list li::before {
+      content: counter(step) "단계";
+      position: absolute;
+      left: 0;
+      font-weight: 700;
+      color: #1a1a1a;
+      min-width: 44px;
+    }
+
+    /* ── 인포박스 ── */
+    .info-box {
+      background: #f0f0fa;
+      border-left: 4px solid #7070bb;
+      border-radius: 4px;
+      padding: 14px 18px;
+      margin: 14px 0;
+    }
+    .info-box .box-title {
+      font-weight: 700;
+      color: #4040aa;
+      font-size: 13.5px;
+      margin-bottom: 6px;
+    }
+    .info-box .box-title::before { content: "§  "; }
+    .info-box p { font-size: 13.5px; color: #333366; line-height: 1.75; margin: 0; }
+
+    /* ── 시험 데이터 ── */
+    .test-item { margin-bottom: 20px; }
+    .test-item .test-label { font-weight: 700; font-size: 14px; margin-bottom: 6px; color: #1a1a1a; }
+    .test-item .test-label::before { content: "● "; }
+
+    /* ── FAQ ── */
+    .faq-item {
+      margin-bottom: 22px;
+      padding-bottom: 18px;
+      border-bottom: 1px solid #eee;
+    }
+    .faq-item:last-child { border-bottom: none; }
+    .faq-q { font-weight: 700; font-size: 14px; color: #1a1a1a; margin-bottom: 8px; }
+    .faq-q::before { content: "Q. "; color: #555; }
+    .faq-a { font-size: 14px; color: #333; padding-left: 24px; line-height: 1.75; }
+    .faq-a::before { content: "A. "; font-weight: 700; color: #555; margin-left: -24px; }
+
+    /* ── 문의 ── */
+    .contact-box {
+      background: #fff8e1;
+      border: 1.5px solid #f5c518;
+      border-radius: 6px;
+      padding: 16px 20px;
+      margin-top: 8px;
+    }
+    .contact-box p { font-size: 14px; color: #333; line-height: 1.75; margin: 0; }
+    .contact-box strong { color: #1a1a1a; }
+
+    /* ── 화살표 버튼 ── */
+    .arrow {
+      position: fixed;
+      top: 50%;
+      transform: translateY(-50%);
+      z-index: 200;
+      width: 40px;
+      height: 40px;
+      border-radius: 50%;
+      background: rgba(255,255,255,0.9);
+      border: 1.5px solid #ddd;
+      box-shadow: 0 2px 8px rgba(0,0,0,0.15);
+      cursor: pointer;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-size: 18px;
+      color: #333;
+      transition: opacity 0.2s, background 0.2s;
+      user-select: none;
+      -webkit-tap-highlight-color: transparent;
+    }
+    .arrow:hover { background: #fff; box-shadow: 0 3px 12px rgba(0,0,0,0.2); }
+    .arrow:active { background: #f0f0f0; }
+    .arrow.hidden { opacity: 0; pointer-events: none; }
+    .arrow-left  { left: 12px; }
+    .arrow-right { right: 12px; }
+
+    @media (min-width: 768px) {
+      .arrow { width: 48px; height: 48px; font-size: 20px; }
+      .arrow-left  { left: 20px; }
+      .arrow-right { right: 20px; }
+    }
+
+    /* ── 키보드 힌트 팝업 (데스크톱) ── */
+    .kbd-hint {
+      position: fixed;
+      bottom: 28px;
+      right: 24px;
+      background: rgba(30,30,30,0.85);
+      color: #fff;
+      font-size: 13px;
+      padding: 10px 16px;
+      border-radius: 8px;
+      z-index: 300;
+      pointer-events: none;
+      opacity: 1;
+      transition: opacity 0.8s ease;
+      display: none;
+    }
+    .kbd-hint.show { display: block; }
+    .kbd-hint.fade { opacity: 0; }
+    .kbd-hint kbd {
+      display: inline-block;
+      background: rgba(255,255,255,0.2);
+      border: 1px solid rgba(255,255,255,0.3);
+      border-radius: 4px;
+      padding: 1px 6px;
+      font-family: inherit;
+      font-size: 12px;
+    }
+
+    @media print {
+      html, body { overflow: visible; height: auto; }
+      .slider { flex-direction: column; overflow: visible; height: auto; }
+      .slide { width: 100%; height: auto; flex: none; overflow: visible; padding: 0; }
+      .slide-inner { box-shadow: none; padding: 48px 60px; }
+      .indicator, .arrow, .kbd-hint { display: none; }
+    }
+  </style>
+</head>
+<body>
+
+<div class="slider" id="slider">
+
+  <!-- 페이지 1: 표지 (페이지 수 제외) -->
+  <div class="slide" id="slide-0">
+    <div class="slide-inner">
+      <div class="cover">
+        <div class="cover-title">
+          <h1>센트글루(SCENT GLUE)<br>제품 설명서</h1>
+        </div>
+        <div class="cover-bottom">
+          <div class="meta">
+            <strong>주식회사 킁랩</strong><br>
+            ver 1.1<br>
+            2026.06.05.
+          </div>
+          <div class="confidential">
+            주식회사 킁랩의 제휴 공방에 제공하는 기밀 문서입니다<br>
+            외부 공유를 전적으로 금지합니다
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- 페이지 2: 제품 개요 + 제형 -->
+  <div class="slide" id="slide-1">
+    <div class="slide-inner">
+      <div class="page-num">1 / 5</div>
+      <div class="section">
+        <div class="section-title">1. 제품 개요 및 스펙</div>
+        <ul class="spec-list">
+          <li><span class="label">제품명</span><span class="value">센트글루 (Scent Glue)</span></li>
+          <li><span class="label">카테고리</span><span class="value">향 지속 보조 화장품</span></li>
+          <li><span class="label">제품설명</span><span class="value">향수를 뿌리기 전 피부에 먼저 바르는 고체 스틱 밤</span></li>
+          <li><span class="label">제품용량</span><span class="value">9g</span></li>
+          <li><span class="label">핵심기능</span><span class="value">기존 향수 본연의 발향을 바꾸지 않고 지속 시간만 늘려줍니다.</span></li>
+          <li><span class="label">개발자</span><span class="value">KAIST 출신 연구진이 개발한 무색무취 퍼퓸 픽서(Perfume Fixer)입니다.</span></li>
+          <li><span class="label">사용기한</span><span class="value">제조일로부터 2년</span></li>
+          <li><span class="label">보관방법</span><span class="value">상온(10~35℃) 보관을 권장합니다.</span></li>
+          <li><span class="label">판매업자</span><span class="value">책임판매업자 ㈜킁랩</span></li>
+          <li><span class="label">제조업자</span><span class="value">㈜지앤아이코스메틱</span></li>
+        </ul>
+      </div>
+      <div class="section">
+        <div class="section-title">2. 제형</div>
+        <p class="body-text">내부 테스트 결과, 지나치게 매트한 제형보다 적절한 오일감을 가진 제형에서 향 분자의 포집 및 잔존에 더 유리한 경향을 확인하였습니다. 센트글루는 끈적임은 줄이면서도 향 분자가 머물 수 있는 얇은 고정층을 형성하도록 현재의 제형감으로 최적화되어 있습니다.</p>
+      </div>
+    </div>
+  </div>
+
+  <!-- 페이지 3: 사용방법 + 주요 성분 -->
+  <div class="slide" id="slide-2">
+    <div class="slide-inner">
+      <div class="page-num">2 / 5</div>
+      <div class="section">
+        <div class="section-title">3. 사용 방법</div>
+        <ol class="step-list">
+          <li>손목, 목 뒤 등 향수를 뿌릴 부위에 가볍게 펴 바릅니다.</li>
+          <li>제품이 피부에 흡수되어 자리 잡을 때까지 30초~1분 정도 잠시 기다립니다.</li>
+          <li>그 위에 평소처럼 향수를 뿌립니다.</li>
+        </ol>
+      </div>
+      <div class="section">
+        <div class="section-title">4. 주요 성분 및 핵심 원리</div>
+        <p class="body-text">센트글루는 블랙푸드 17 콤플렉스 유래 식물성 폴리페놀 성분을 활용해 향 분자의 확산과 휘발을 늦추는 무색무취의 퍼퓸 픽서(Perfume Fixer)입니다.</p>
+        <div class="info-box">
+          <div class="box-title">블랙푸드 17 콤플렉스란?</div>
+          <p>아로니아, 블랙커런트, 포도, 코코아, 복분자, 엘더베리, 아사이 등 색이 진한 식물 및 열매의 추출물이 포함된 원료를 말합니다.</p>
+        </div>
+        <p class="body-text">센트글루의 핵심 작용 원리는 폴리페놀 성분이 향 분자와 형성하는 약한 물리화학적 상호작용입니다.</p>
+        <p class="body-text">폴리페놀은 소수성(hydrophobic) 작용기가 많은 식물 유래 성분으로, 수계(water-based) 환경에서는 단독으로 피부에 고르게 분산되기 어렵습니다. 센트글루는 오일 기반 제형을 채택하여 폴리페놀의 화학적 특성에 맞는 매개체를 통해 유효 성분을 피부 표면에 얇고 균일하게 분산시킵니다.</p>
+        <p class="body-text">이렇게 피부 위에 고르게 자리 잡은 폴리페놀 성분은 향료 분자와 수소결합, 쌍극자 상호작용, 반데르발스 힘과 같은 약한 물리화학적 상호작용을 형성합니다. 이 상호작용은 향 분자를 강하게 붙들어두는 화학 반응이 아니라, 향 분자의 이동과 증발 속도를 완만하게 늦추는 작용입니다. 그 결과 향이 변질되지 않으면서도 피부 위에서 더 천천히, 더 오래 발산됩니다.</p>
+      </div>
+    </div>
+  </div>
+
+  <!-- 페이지 4: 주의사항 -->
+  <div class="slide" id="slide-3">
+    <div class="slide-inner">
+      <div class="page-num">3 / 5</div>
+      <div class="section">
+        <div class="section-title">5. 사용시 참고 및 주의사항</div>
+        <ul class="dash-list">
+          <li>한 부위 기준으로 앞뒤 왕복 1~3회 정도 얇게 펴 바르는 것을 권장합니다. 내부 테스트 결과 왕복 3회 정도의 도포만으로도 향수 단독 사용 대비 잔향 유지에 차이가 나타남을 확인했습니다.</li>
+          <li>많이 바를수록 효과가 계속 커지는 제품이라기보다 피부 표면에 향이 머물 수 있는 얇은 고정층을 형성하는 것이 목적인 제품이므로, 같은 부위에 과도하게 덧바르기보다 향수를 뿌릴 범위에 맞춰 얇고 고르게 펴 바르는 것이 더 중요합니다.</li>
+          <li>특히 지속력이 짧게 느껴지는 향수와 함께 사용할 때 만족도가 높습니다.</li>
+          <li>실크, 가죽, 밝은 색상의 고급 의류에 직접 닿지 않도록 주의가 필요합니다. 소량 묻었을 때는 일반 세탁으로 관리 가능하며, 센트글루의 성분은 물에 잘 용해되는 특성을 가지고 있습니다.</li>
+          <li>눈가, 입술, 상처 부위에는 사용을 금지합니다.</li>
+          <li>어린이의 손에 닿지 않는 곳에 보관하십시오.</li>
+          <li>사용 중 피부 이상(가려움, 발적, 자극 등)이 나타날 경우 즉시 사용을 중단하고 전문의와 상담하십시오.</li>
+          <li><strong>스웨팅 현상:</strong> 밤 제형 특성상 보관 환경에 따라 표면에 오일이 올라올 수 있으나, 품질에는 이상이 없는 정상 제품입니다.</li>
+        </ul>
+      </div>
+    </div>
+  </div>
+
+  <!-- 페이지 5: 시험 데이터 -->
+  <div class="slide" id="slide-4">
+    <div class="slide-inner">
+      <div class="page-num">4 / 5</div>
+      <div class="section">
+        <div class="section-title">6. 인체적용 시험 데이터 (한국피부과학연구원)</div>
+        <div class="test-item">
+          <div class="test-label">향 지속력 설문 결과</div>
+          <p class="body-text">성인 여성 21명을 대상으로 존바바토스 향수를 사용하여 제품 사용 만족도를 확인한 시험에서, 제품 사용 후 1시간, 5시간, 8시간, 10시간 경과 시점에서 확산력, 지속력, 전체 사용감 만족도 모두 100%를 기록하였습니다.</p>
+        </div>
+        <div class="test-item">
+          <div class="test-label">향 강도 비교 결과</div>
+          <p class="body-text">향수 단독 사용 대비 센트글루 사용 시 향 강도가 더 오래 유지되는 경향을 확인하였습니다.</p>
+          <ul class="dash-list">
+            <li>1시간 경과 후: '확실히 더 강함' 57.1%, '약간 더 강함' 42.9%</li>
+            <li>5시간 경과 후: '확실히 더 강함' 81.0%, '약간 더 강함' 19.0%</li>
+            <li>8시간 및 10시간 경과 후에도 "향이 여전히 남아 있다", "지속 효과를 실제로 경험했다" 응답</li>
+          </ul>
+        </div>
+        <div class="test-item">
+          <div class="test-label">피부 안전성 시험 결과</div>
+          <p class="body-text">일반 피부 대상 일차자극 시험을 31명 대상으로 진행한 결과, 평균 피부반응도 0.00으로 '무자극' 판정을 확인. 민감성 피부 대상 일차자극 시험을 32명 대상으로 진행한 결과, 평균 피부반응도 0.00으로 '무자극' 판정을 확인.</p>
+        </div>
+        <div class="test-item">
+          <div class="test-label">미생물 및 중금속 시험 결과</div>
+          <p class="body-text">미생물 시험 결과, 대장균·녹농균·황색포도상구균 3종 모두 검출되지 않음을 확인. 중금속 시험 결과, 납·비소 외 6종 모두 검출되지 않음을 확인.</p>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- 페이지 6: FAQ + 문의 -->
+  <div class="slide" id="slide-5">
+    <div class="slide-inner">
+      <div class="page-num">5 / 5</div>
+      <div class="section">
+        <div class="section-title">7. 고객 응대 FAQ</div>
+        <div class="faq-item">
+          <div class="faq-q">고체향수와 무엇이 다른가요?</div>
+          <div class="faq-a">고체향수는 그 자체로 향이 나는 '향수'입니다. 반면 센트글루는 향과 색이 없는 무향 제품으로, 고객님이 사용하시는 향수의 지속력을 높여주는 '픽서' 역할을 합니다.</div>
+        </div>
+        <div class="faq-item">
+          <div class="faq-q">같이 쓰면 기존 향수의 향이 변하거나 섞이지 않나요?</div>
+          <div class="faq-a">센트글루는 자체 향이 없는 제품으로, 향을 새롭게 더하거나 덮는 방식이 아닙니다. 폴리페놀 성분이 향 분자가 피부 위에 오래 머물 수 있도록 도와주기 때문에, 기존 향수의 향을 크게 해치지 않고 지속력을 보조하는 제품입니다.</div>
+        </div>
+        <div class="faq-item">
+          <div class="faq-q">향수를 먼저 뿌리고 발라도 되나요?</div>
+          <div class="faq-a">가능은 하지만, 센트글루를 먼저 바른 뒤 향수를 뿌리는 사용법을 권장합니다. 이 환경이 먼저 형성된 상태에서 향수를 뿌리는 것이 지속력 보조에 더 효과적입니다. 향수를 먼저 뿌린 뒤 센트글루를 바르면 향이 일부 밀리거나 섞일 수 있어, 향수 본연의 향과 고정 효과가 덜 안정적으로 느껴질 수 있습니다.</div>
+        </div>
+      </div>
+      <div class="section">
+        <div class="section-title" style="font-size: 15px;">문의</div>
+        <div class="contact-box">
+          <p>제품 사용 방법, 교환 및 기타 문의가 있으신 경우<br>
+          카카오톡 채널 <strong>'주식회사 킁랩'</strong>으로 문의해 주세요.<br>
+          접수된 문의는 영업일 기준 09:00~18:00 내 순차적으로 답변드리겠습니다.</p>
+        </div>
+      </div>
+    </div>
+  </div>
+
+</div>
+
+<!-- 화살표 -->
+<button class="arrow arrow-left hidden" id="arrowLeft" aria-label="이전 페이지">&#8592;</button>
+<button class="arrow arrow-right" id="arrowRight" aria-label="다음 페이지">&#8594;</button>
+
+<!-- 인디케이터 -->
+<div class="indicator" id="indicator">
+  <div class="dot active" onclick="goToSlide(0)"></div>
+  <div class="dot" onclick="goToSlide(1)"></div>
+  <div class="dot" onclick="goToSlide(2)"></div>
+  <div class="dot" onclick="goToSlide(3)"></div>
+  <div class="dot" onclick="goToSlide(4)"></div>
+  <div class="dot" onclick="goToSlide(5)"></div>
+</div>
+
+<!-- 키보드 힌트 -->
+<div class="kbd-hint" id="kbdHint">
+  <kbd>←</kbd> <kbd>→</kbd> 키로 페이지를 넘길 수 있습니다
+</div>
+
+<script>
+  const TOTAL = 6;
+  const slider = document.getElementById('slider');
+  const dots = document.querySelectorAll('.dot');
+  const arrowLeft = document.getElementById('arrowLeft');
+  const arrowRight = document.getElementById('arrowRight');
+  const kbdHint = document.getElementById('kbdHint');
+
+  let currentIndex = 0;
+
+  function goToSlide(index) {
+    index = Math.max(0, Math.min(TOTAL - 1, index));
+    slider.scrollTo({ left: index * window.innerWidth, behavior: 'smooth' });
+  }
+
+  function updateArrows(index) {
+    arrowLeft.classList.toggle('hidden', index === 0);
+    arrowRight.classList.toggle('hidden', index === TOTAL - 1);
+  }
+
+  arrowLeft.addEventListener('click', () => goToSlide(currentIndex - 1));
+  arrowRight.addEventListener('click', () => goToSlide(currentIndex + 1));
+
+  slider.addEventListener('scroll', () => {
+    currentIndex = Math.round(slider.scrollLeft / window.innerWidth);
+    dots.forEach((d, i) => d.classList.toggle('active', i === currentIndex));
+    updateArrows(currentIndex);
+  });
+
+  /* 키보드 (데스크톱) */
+  document.addEventListener('keydown', (e) => {
+    if (e.key === 'ArrowRight') goToSlide(currentIndex + 1);
+    if (e.key === 'ArrowLeft')  goToSlide(currentIndex - 1);
+  });
+
+  /* 키보드 힌트: 데스크톱에서만, 5초 뒤 페이드아웃 */
+  if (window.matchMedia('(pointer: fine)').matches) {
+    kbdHint.classList.add('show');
+    setTimeout(() => {
+      kbdHint.classList.add('fade');
+      kbdHint.addEventListener('transitionend', () => kbdHint.classList.remove('show'), { once: true });
+    }, 5000);
+  }
+</script>
+
+</body>
+</html>
