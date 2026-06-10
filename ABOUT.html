@@ -354,8 +354,7 @@
             2026.06.05.
           </div>
           <div class="confidential">
-            주식회사 킁랩의 제휴 공방에 제공하는 기밀 문서입니다<br>
-            외부 공유를 전적으로 금지합니다
+            주식회사 킁랩의 제휴 공방에 제공하는 제품 설명서입니다
           </div>
         </div>
       </div>
@@ -525,10 +524,37 @@
   const kbdHint = document.getElementById('kbdHint');
 
   let currentIndex = 0;
+  let isAnimating = false;
+
+  function easeInOutQuart(t) {
+    return t < 0.5 ? 8 * t * t * t * t : 1 - Math.pow(-2 * t + 2, 4) / 2;
+  }
 
   function goToSlide(index) {
     index = Math.max(0, Math.min(TOTAL - 1, index));
-    slider.scrollTo({ left: index * window.innerWidth, behavior: 'smooth' });
+    if (index === currentIndex || isAnimating) return;
+    isAnimating = true;
+
+    slider.style.scrollSnapType = 'none';
+
+    const start = slider.scrollLeft;
+    const end = index * window.innerWidth;
+    const duration = 520;
+    let startTime = null;
+
+    function step(timestamp) {
+      if (!startTime) startTime = timestamp;
+      const elapsed = timestamp - startTime;
+      const progress = Math.min(elapsed / duration, 1);
+      slider.scrollLeft = start + (end - start) * easeInOutQuart(progress);
+      if (progress < 1) {
+        requestAnimationFrame(step);
+      } else {
+        slider.style.scrollSnapType = 'x mandatory';
+        isAnimating = false;
+      }
+    }
+    requestAnimationFrame(step);
   }
 
   function updateArrows(index) {
